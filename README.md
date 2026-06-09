@@ -15,6 +15,11 @@
 - **动态经验计算** — 攻略书和染剂数量基于经验值最优解动态分配
 - **深色主题** — 护眼的深色界面设计
 
+## 实际画面
+![alt text](3f8c7de6abc1888342e451360d78ed0f.png)
+![alt text](2fdcfd78071e360561080d687cf8a434.png)
+![alt text](ca07c6b64bb5422503c5aa934e556582.png)
+![alt text](b098be3e241ef70364463f36b741b1ae.png)
 ## 项目结构
 
 ```
@@ -104,3 +109,4 @@ pyinstaller --onedir --windowed --icon="mint_icon.ico" --name="异环NTE养成�
 
 ## 作者
 兔唧唧的萝卜酱
+版本V1.1
