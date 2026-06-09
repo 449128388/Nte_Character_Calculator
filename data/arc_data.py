@@ -1,11 +1,18 @@
 """
 异环 NTE 弧盘强化材料数据
 来源：弧盘强化总表 + 全弧盘突破材料对照
+支持从 JSON 文件加载和保存（数据持久化）
 """
+import os
+import json
 
-# ==================== 全弧盘突破材料对照 ====================
+# ==================== 数据文件路径 ====================
+_USER_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
+_ARC_JSON_PATH = os.path.join(_USER_DATA_DIR, "arc_data.json")
+
+# ==================== 全弧盘突破材料对照（默认内置数据） ====================
 # 格式：弧盘名: [类别, 低级异像素材, 中级异像素材, 高级异像素材, 低级弧盘素材, 中级弧盘素材, 高级弧盘素材]
-ARC_MATERIAL_MAP = {
+_DEFAULT_ARC_MATERIAL_MAP = {
     "银河暂留": ["等离子", "悬想幻妄", "渴念幻妄", "超验幻妄", "液态梦试用装", "液态梦旅行装", "灌装液态梦"],
     "倾世之语": ["固态", "失落絮语", "茫昧絮语", "悖谬絮语", "螺旋乐碎屑", "螺旋乐小节", "螺旋乐齐奏"],
     "最后一朵玫瑰": ["液态", "失落絮语", "茫昧絮语", "悖谬絮语", "铁制苹果核", "银质苹果核", "金色苹果核"],
@@ -33,16 +40,52 @@ ARC_MATERIAL_MAP = {
     "勿忘伞": ["聚合", "模糊数符", "未解数符", "扭曲数符", "铁制苹果核", "银质苹果核", "金色苹果核"],
 }
 
+
+def load_arc_data():
+    """从 JSON 文件加载弧盘数据，不存在则使用内置数据"""
+    if os.path.exists(_ARC_JSON_PATH):
+        try:
+            with open(_ARC_JSON_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                validated = {}
+                for key, value in data.items():
+                    if isinstance(value, list) and len(value) >= 7:
+                        validated[key] = value[:7]
+                    else:
+                        validated[key] = value
+                return validated
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"读取弧盘数据文件失败: {e}，使用内置数据")
+    
+    return {k: list(v) for k, v in _DEFAULT_ARC_MATERIAL_MAP.items()}
+
+
+def save_arc_data(data_map):
+    """保存弧盘数据到 JSON 文件"""
+    os.makedirs(_USER_DATA_DIR, exist_ok=True)
+    try:
+        with open(_ARC_JSON_PATH, 'w', encoding='utf-8') as f:
+            json.dump(data_map, f, ensure_ascii=False, indent=2)
+    except OSError as e:
+        print(f"保存弧盘数据文件失败: {e}")
+
+
+# ==================== 模块级变量（供其他模块导入使用） ====================
+# 启动时从 JSON 加载，优先使用用户保存的数据
+ARC_MATERIAL_MAP = load_arc_data()
+
 # ==================== 弧盘强化材料总表（累计值） ====================
 # 格式：弧盘等级: [低级弧盘素材, 中级弧盘素材, 高级弧盘素材, 低级异像素材, 中级异像素材, 高级异像素材, 淡色染剂, 无彩染剂, 混沌染剂, 累计金币, 累计经验, 备注]
+# 数据基于游戏实际数值，1级为初始状态（全0）
 ARC_LEVEL_UP_DATA = {
+    1: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ""],
     20: [0, 0, 0, 0, 0, 0, 0, 0, 4, 12000, 40000, ""],
     30: [3, 0, 0, 3, 0, 0, 0, 0, 10, 46000, 100000, "⭐"],
     40: [8, 0, 0, 8, 0, 0, 0, 2, 28, 90500, 285000, "⭐⭐"],
     50: [0, 6, 0, 0, 6, 0, 0, 2, 34, 183500, 345000, "⭐⭐⭐"],
     60: [0, 12, 0, 0, 12, 0, 0, 1, 56, 248750, 562500, "⭐⭐⭐⭐"],
     70: [0, 0, 6, 0, 0, 6, 0, 2, 91, 374500, 915000, "⭐⭐⭐⭐⭐"],
-    80: [0, 0, 12, 0, 0, 12, 0, 0, 149, 567000, 1490000, "⭐⭐⭐⭐⭐⭐"],
+    80: [11, 18, 18, 11, 18, 18, 0, 7, 372, 1522250, 1490000, "⭐⭐⭐⭐⭐⭐"],
 }
 
 # 列名

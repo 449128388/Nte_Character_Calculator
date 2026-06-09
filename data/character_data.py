@@ -1,11 +1,18 @@
 """
 异环 NTE 角色突破材料数据
 来源：全角色突破材料对照表 + 角色等级突破材料总表
+支持从 JSON 文件加载和保存（数据持久化）
 """
+import os
+import json
 
-# ==================== 全角色突破材料对照 ====================
+# ==================== 数据文件路径 ====================
+_USER_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
+_CHARACTER_JSON_PATH = os.path.join(_USER_DATA_DIR, "character_data.json")
+
+# ==================== 全角色突破材料对照（默认内置数据） ====================
 # 格式：角色名: [突破素材名称, 低级异像素材, 中级异像素材, 高级异像素材, BOSS名称, BOSS位置]
-CHARACTER_MATERIAL_MAP = {
+_DEFAULT_CHARACTER_MATERIAL_MAP = {
     "安魂曲": ["倾诉花种", "失落絮语", "茫昧絮语", "悖谬絮语", "塞润尼缇", "未闻浦地区-塞润尼缇庄园"],
     "浔": ["倾诉花种", "失落絮语", "茫昧絮语", "悖谬絮语", "塞润尼缇", "未闻浦地区-塞润尼缇庄园"],
     "白藏": ["护巢残片", "模糊数符", "未解数符", "扭曲数符", "囿巢鸟", "新赫兰德区-办公大楼楼顶飞机坪"],
@@ -25,16 +32,54 @@ CHARACTER_MATERIAL_MAP = {
     "翳": ["倾诉花种", "悬想幻妄", "渴念幻妄", "超验幻妄", "塞润尼缇", "未闻浦地区-塞润尼缇庄园"],
 }
 
+
+def load_character_data():
+    """从 JSON 文件加载角色数据，不存在则使用内置数据"""
+    if os.path.exists(_CHARACTER_JSON_PATH):
+        try:
+            with open(_CHARACTER_JSON_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                # 转换为正确格式（JSON 中 list 转为 tuple 格式）
+                validated = {}
+                for key, value in data.items():
+                    if isinstance(value, list) and len(value) >= 6:
+                        validated[key] = value[:6]
+                    else:
+                        validated[key] = value
+                return validated
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"读取角色数据文件失败: {e}，使用内置数据")
+    
+    # 返回内置数据的深拷贝副本
+    return {k: list(v) for k, v in _DEFAULT_CHARACTER_MATERIAL_MAP.items()}
+
+
+def save_character_data(data_map):
+    """保存角色数据到 JSON 文件"""
+    os.makedirs(_USER_DATA_DIR, exist_ok=True)
+    try:
+        with open(_CHARACTER_JSON_PATH, 'w', encoding='utf-8') as f:
+            json.dump(data_map, f, ensure_ascii=False, indent=2)
+    except OSError as e:
+        print(f"保存角色数据文件失败: {e}")
+
+
+# ==================== 模块级变量（供其他模块导入使用） ====================
+# 启动时从 JSON 加载，优先使用用户保存的数据
+CHARACTER_MATERIAL_MAP = load_character_data()
+
 # ==================== 角色等级突破材料总表（累计值） ====================
 # 格式：等级: [低级异像, 中级异像, 高级异像, 突破素材, 新锐攻略, 资深攻略, 特级攻略, 累计金币, 累计经验, 备注]
+# 数据基于游戏实际数值，1级为初始状态（全0）
 CHARACTER_LEVEL_UP_DATA = {
+    1: [0, 0, 0, 0, 0, 0, 0, 0, 0, ""],
     20: [0, 0, 0, 0, 19, 0, 5, 29750, 119000, ""],
     30: [5, 0, 0, 0, 19, 0, 10, 54750, 219000, "⭐"],
     40: [12, 0, 0, 2, 19, 0, 18, 144750, 379000, "⭐⭐"],
     50: [0, 6, 0, 8, 19, 0, 30, 229750, 619000, "⭐⭐⭐"],
     60: [0, 12, 0, 16, 0, 0, 50, 345000, 1000000, "⭐⭐⭐⭐"],
     70: [0, 0, 6, 24, 19, 0, 80, 529750, 1619000, "⭐⭐⭐⭐⭐"],
-    80: [0, 0, 9, 36, 19, 0, 130, 804750, 2619000, "⭐⭐⭐⭐⭐⭐"],
+    80: [17, 18, 15, 86, 114, 0, 323, 2138500, 2619000, "⭐⭐⭐⭐⭐⭐"],
 }
 
 # 列名（用于生成表头）
