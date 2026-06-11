@@ -16,10 +16,11 @@
 - **深色主题** — 护眼的深色界面设计
 
 ## 实际画面
-![alt text](3f8c7de6abc1888342e451360d78ed0f.png)
-![alt text](2fdcfd78071e360561080d687cf8a434.png)
-![alt text](ca07c6b64bb5422503c5aa934e556582.png)
-![alt text](b098be3e241ef70364463f36b741b1ae.png)
+
+![养成计算器 - 角色配置与计算](3f8c7de6abc1888342e451360d78ed0f.png)
+![全队缺口汇总统计](2fdcfd78071e360561080d687cf8a434.png)
+![详细结果卡片展示](ca07c6b64bb5422503c5aa934e556582.png)
+![材料合成换算页面](b098be3e241ef70364463f36b741b1ae.png)
 ## 项目结构
 
 ```

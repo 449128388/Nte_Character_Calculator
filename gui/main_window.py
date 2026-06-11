@@ -3,11 +3,13 @@
 参考 ok-nte 风格：紧凑左侧导航 + 顶部标题栏 + 卡片式内容区
 支持侧边栏收缩/展开功能
 """
+import os
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout,
     QPushButton, QStackedWidget, QLabel, QFrame, QScrollArea
 )
 from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtGui import QIcon
 
 
 class NavButton(QPushButton):
@@ -39,6 +41,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("异环 NTE 养成计算器")
         self.setMinimumSize(1000, 600)
         self.resize(1400, 900)
+        
+        # 设置窗口图标（确保任务栏正确显示）
+        ico_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "mint_icon.ico")
+        if os.path.exists(ico_path):
+            self.setWindowIcon(QIcon(ico_path))
         
         # 侧边栏状态
         self.sidebar_expanded = True

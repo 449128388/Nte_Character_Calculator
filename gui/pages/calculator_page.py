@@ -95,6 +95,9 @@ class DetailResultCard(QFrame):
         low_text = ""
         if materials.get("low_yixiang", 0) > 0:
             low_text = f"{materials['low_yixiang_name']} ×{materials['low_yixiang']}"
+        if materials.get("arc_low_yixiang", 0) > 0:
+            arc_low_part = f"{materials.get('arc_low_yixiang_name', '')} ×{materials['arc_low_yixiang']}"
+            low_text = f"{low_text} + {arc_low_part}" if low_text else f"弧盘{arc_low_part}"
         if low_text:
             self._add_material_item(row, 0, "低级异像", low_text)
         
@@ -110,6 +113,9 @@ class DetailResultCard(QFrame):
         mid_text = ""
         if materials.get("mid_yixiang", 0) > 0:
             mid_text = f"{materials['mid_yixiang_name']} ×{materials['mid_yixiang']}"
+        if materials.get("arc_mid_yixiang", 0) > 0:
+            arc_mid_part = f"{materials.get('arc_mid_yixiang_name', '')} ×{materials['arc_mid_yixiang']}"
+            mid_text = f"{mid_text} + {arc_mid_part}" if mid_text else f"弧盘{arc_mid_part}"
         if mid_text:
             self._add_material_item(row, 0, "中级异像", mid_text)
         
@@ -125,6 +131,9 @@ class DetailResultCard(QFrame):
         high_text = ""
         if materials.get("high_yixiang", 0) > 0:
             high_text = f"{materials['high_yixiang_name']} ×{materials['high_yixiang']}"
+        if materials.get("arc_high_yixiang", 0) > 0:
+            arc_high_part = f"{materials.get('arc_high_yixiang_name', '')} ×{materials['arc_high_yixiang']}"
+            high_text = f"{high_text} + {arc_high_part}" if high_text else f"弧盘{arc_high_part}"
         if high_text:
             self._add_material_item(row, 0, "高级异像", high_text)
         
@@ -878,8 +887,11 @@ class CalculatorPage(QWidget):
             "high_arc_name": arc_materials.get('high_arc', ''),
             "high_arc_count": arc_gap.get('high_arc', 0),
             "arc_low_yixiang": arc_gap.get('low_yixiang', 0),
+            "arc_low_yixiang_name": arc_materials.get('low_yixiang', '') if arc_materials else '',
             "arc_mid_yixiang": arc_gap.get('mid_yixiang', 0),
+            "arc_mid_yixiang_name": arc_materials.get('mid_yixiang', '') if arc_materials else '',
             "arc_high_yixiang": arc_gap.get('high_yixiang', 0),
+            "arc_high_yixiang_name": arc_materials.get('high_yixiang', '') if arc_materials else '',
             "exp_low": char_gap.get('exp_low', 0),
             "exp_mid": char_gap.get('exp_mid', 0),
             "exp_high": char_gap.get('exp_high', 0),

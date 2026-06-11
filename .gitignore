@@ -26,7 +26,6 @@ debug.log
 
 # 生成物/输出
 output/
-mint_icon.ico
 
 # 项目 generators 目录（非核心代码）
 /generators/

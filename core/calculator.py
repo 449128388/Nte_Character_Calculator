@@ -76,16 +76,29 @@ class Calculator:
                 'gold': 0
             }
 
-        total = CHARACTER_LEVEL_UP_DATA.get(target_level, [0] * 11)
-        current = CHARACTER_LEVEL_UP_DATA.get(curr_level, [0] * 11)
+        # 1. 材料类（分段值，累加跨越的各等级段）
+        levels = sorted(CHARACTER_LEVEL_UP_DATA.keys())
+        break_material = 0
+        low_yixiang = 0
+        mid_yixiang = 0
+        high_yixiang = 0
+        gold = 0
 
-        # 1. 材料类（累计值，直接相减）
+        for lvl in levels:
+            if lvl > curr_level and lvl <= target_level:
+                data = CHARACTER_LEVEL_UP_DATA.get(lvl, [0] * 11)
+                break_material += data[3]
+                low_yixiang += data[0]
+                mid_yixiang += data[1]
+                high_yixiang += data[2]
+                gold += data[7]
+
         result = {
-            'break_material': total[3] - current[3],
-            'low_yixiang': total[0] - current[0],
-            'mid_yixiang': total[1] - current[1],
-            'high_yixiang': total[2] - current[2],
-            'gold': total[7] - current[7],
+            'break_material': break_material,
+            'low_yixiang': low_yixiang,
+            'mid_yixiang': mid_yixiang,
+            'high_yixiang': high_yixiang,
+            'gold': gold,
         }
 
         # 2. 攻略书（基于总经验值动态最优分配）
@@ -147,18 +160,35 @@ class Calculator:
                 'gold': 0,
             }
 
-        total = ARC_LEVEL_UP_DATA.get(target_level, [0] * 13)
-        current = ARC_LEVEL_UP_DATA.get(curr_level, [0] * 13)
+        # 1. 材料类（分段值，累加跨越的各等级段）
+        levels = sorted(ARC_LEVEL_UP_DATA.keys())
+        low_arc = 0
+        mid_arc = 0
+        high_arc = 0
+        low_yixiang = 0
+        mid_yixiang = 0
+        high_yixiang = 0
+        gold = 0
 
-        # 1. 材料类（累计值，直接相减）
+        for lvl in levels:
+            if lvl > curr_level and lvl <= target_level:
+                data = ARC_LEVEL_UP_DATA.get(lvl, [0] * 13)
+                low_arc += data[0]
+                mid_arc += data[1]
+                high_arc += data[2]
+                low_yixiang += data[3]
+                mid_yixiang += data[4]
+                high_yixiang += data[5]
+                gold += data[9]
+
         result = {
-            'low_arc': total[0] - current[0],
-            'mid_arc': total[1] - current[1],
-            'high_arc': total[2] - current[2],
-            'low_yixiang': total[3] - current[3],
-            'mid_yixiang': total[4] - current[4],
-            'high_yixiang': total[5] - current[5],
-            'gold': total[9] - current[9],
+            'low_arc': low_arc,
+            'mid_arc': mid_arc,
+            'high_arc': high_arc,
+            'low_yixiang': low_yixiang,
+            'mid_yixiang': mid_yixiang,
+            'high_yixiang': high_yixiang,
+            'gold': gold,
         }
 
         # 2. 染剂（基于总经验值动态最优分配）

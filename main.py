@@ -17,10 +17,11 @@ def main():
 
     app = QApplication(sys.argv)
 
-    # 设置应用图标
-    icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mint_icon_512x512.png")
-    if os.path.exists(icon_path):
-        app.setWindowIcon(QIcon(icon_path))
+    # 设置应用图标（使用 ICO 确保任务栏正确显示）
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    ico_path = os.path.join(base_dir, "mint_icon.ico")
+    if os.path.exists(ico_path):
+        app.setWindowIcon(QIcon(ico_path))
 
     window = MainWindow()
     window.show()
